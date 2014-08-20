@@ -1,0 +1,27 @@
+{
+    "name": "rapid-access",
+    "version": "0.1.0",
+    "description": "data access layer for rapid",
+    "main": "index.js",
+    "directories": {
+        "test": "test"
+    },
+    "scripts": {
+        "test": "rapid test"
+    },
+    "dependencies": {
+        "q": "*"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Clouda-team/rapid-access.git"
+    },
+    "keywords": [
+        "clouda-rapid",
+        "dal"
+    ],
+    "author": "kyriosli",
+    "bugs": {
+        "url": "https://github.com/Clouda-team/rapid-access/issues"
+    }
+}
