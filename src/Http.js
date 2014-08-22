@@ -27,10 +27,6 @@ function Http(options) {
             obj.forbidden = 0;
             obj.slave = !!obj.slave;
         });
-    } else {
-        options.forbidden = options.forbidCount = 0;
-        options.slave = false;
-        N = 1;
     }
 
     options.agent = new http.Agent({maxSockets: conf.maxConnects});
@@ -41,14 +37,25 @@ function Http(options) {
             retry(conf.maxRetries);
 
             function retry(retries) {
-                obj.__proto__ = clusters[connects++ % clusters.length];
+                var option;
+                for (; ;) {
+                    option = clusters[connects++ % N];
+                    if (option.forbidden) {
+                        option.forbidden--;
+                    } else {
+                        break;
+                    }
+                }
+                obj.__proto__ = options;
                 var req = http.request(obj);
                 req.once('socket', function () {
                     resolve(req);
                 }).once('error', function () {
+                    option.forbidden = option.forbidCount;
                     if (retries) {
                         retry(retries - 1);
-                    } else {
+                    }
+                    else {
                         reject({message: 'ECONNECT'});
                     }
                 });

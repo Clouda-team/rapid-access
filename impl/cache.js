@@ -1,11 +1,30 @@
-exports.instance = function (options) {
+var Lru = require('lru-cache'),
+    Q = require('q');
 
+exports.instance = function (options) {
+    return new Cache(options);
 };
 
 exports.Cache = Cache;
 
-function Cache() {
+function Cache(options) {
+    var lru = Lru(options);
+    return {
+        impl: {storage: true},
+        get: function (key) {
+            return resolved(lru.get(key));
+        },
+        set: function (key, value) {
+            lru.set(key, value);
+            return resolved();
+        }
+    };
 
+    function resolved(val) {
+        var deferred = Q.defer();
+        deferred.resolve(val);
+        return deferred.promise;
+    }
 }
 
 

@@ -1,6 +1,6 @@
 {
     "name": "rapid-access",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "data access layer for rapid",
     "main": "index.js",
     "directories": {
@@ -10,7 +10,8 @@
         "test": "rapid test"
     },
     "dependencies": {
-        "q": "*"
+        "q": "*",
+        "lru-cache": "*"
     },
     "repository": {
         "type": "git",
