@@ -34,4 +34,13 @@ describe('cache', function () {
         }).done();
     });
 
+    it('delete', function (next) {
+        cache.delete('foo').then(function () {
+            return cache.get('foo');
+        }).then(function (ret) {
+            assert.strictEqual(ret, undefined);
+            next();
+        }).done();
+    })
+
 });

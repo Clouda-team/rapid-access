@@ -1,6 +1,6 @@
 {
     "name": "rapid-access",
-    "version": "0.1.1",
+    "version": "0.1.12",
     "description": "data access layer for rapid",
     "main": "index.js",
     "directories": {

@@ -62,6 +62,7 @@ clusters接受三种数据类型：对象|字符串数组、字符串。
 
   - function get(key:string, options:object): Promise
   - function set(key:string, data:any, options:object): Promise
+  - function delete(key:string): Promise
 
 ###Db
 

@@ -17,6 +17,10 @@ function Cache(options) {
         set: function (key, value) {
             lru.set(key, value);
             return resolved();
+        },
+        'delete': function (key) {
+            lru.del(key);
+            return resolved();
         }
     };
 
@@ -46,10 +50,14 @@ Cache.wrap = function (obj, cache) {
             });
         };
         if (obj.impl.storage) {
-            var $set = obj.set;
+            var $set = obj.set, $delete = obj.delete;
             obj.set = function (key, val, options) {
                 cache.set(key, val, options);
                 return $set.apply(obj, arguments);
+            };
+            obj.delete = function (key) {
+                cache.delete(key);
+                return $delete.apply(obj, arguments);
             };
         }
     }
@@ -65,7 +73,7 @@ Cache.wrap = function (obj, cache) {
                 if (ret !== undefined) {
                     return ret;
                 }
-                return $find.call(tbl, where, options).then(function (ret) {
+                return $find.call(obj, tbl, where, options).then(function (ret) {
                     cache.set(key, ret);
                     return ret;
                 });
