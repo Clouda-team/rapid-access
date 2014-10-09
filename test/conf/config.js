@@ -1,4 +1,4 @@
-rapid.config.define('dal', {
+rapid.config.define('access', {
     appdb: 'mysql://root:root@localhost/test',
     httpServer: 'http://root:root@127.0.0.5:8032/',
     cache: 'cache:///cache',

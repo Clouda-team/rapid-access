@@ -55,7 +55,6 @@ exports = module.exports = function (obj) {
         }
         throw new Error('Protocol ' + protocol + ' unrecognized, is module installed?');
     } while (0);
-
     var ret = module.instance(obj);
     if (ret.impl.db) {
         Db.call(ret, obj);
@@ -85,7 +84,7 @@ exports.Cache = Cache;
 
 
 if (global.rapid && rapid.resource) {
-    rapid.config.watch('dal', function (obj) {
+    rapid.config.watch('access', function (obj) {
         for (var arr = Object.keys(obj), L = arr.length, i = 0; i < L; i++) {
             var key = arr[i];
             rapid.resource.define(key, exports(obj[key]));

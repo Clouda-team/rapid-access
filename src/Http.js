@@ -1,5 +1,6 @@
 var Q = require('q'),
-    http = require('http'),
+    $http = require('http'),
+    $https = require('https'),
     util = require('util');
 
 module.exports = Http;
@@ -28,6 +29,8 @@ function Http(options) {
             obj.slave = !!obj.slave;
         });
     }
+
+    var http = options.protocol === 'https:' ? $https : $http;
 
     options.agent = new http.Agent({maxSockets: conf.maxConnects});
 
@@ -177,7 +180,14 @@ Http.prototype = {
         this._context.request(options, function (req) {
             req.on('response', function (tres) {
                 readBody(tres, function (buffer) {
-                    deferred.resolve(buffer);
+                    if (tres.statusCode < 300) {
+                        deferred.resolve(buffer);
+                    } else {
+                        deferred.reject({
+                            status: tres.statusCode,
+                            message: buffer.toString()
+                        });
+                    }
                 })
             }).on('error', deferred.reject);
 
@@ -186,10 +196,7 @@ Http.prototype = {
         return deferred.promise;
     },
     get: function (url, options) {
-        options = options || {};
-        options.method = 'GET';
-        options.path = url;
-        return this.request(options);
+        return this._request('GET', url, null, options);
     },
     getJSON: function (url, options) {
         return this.get(url, options).then(function (buffer) {
@@ -197,14 +204,23 @@ Http.prototype = {
         });
     },
     postJSON: function (url, data, options) {
-        options = options || {};
-        options.method = 'POST';
-        options.path = url;
-        return this.request(options, data).then(function (buffer) {
+        return this._request('POST', url, data, options).then(function (buffer) {
             return JSON.parse(buffer);
         });
     },
+    put: function (url, data, options) {
+        return this._request('PUT', url, data, options)
+    },
+    'delete': function (url, data, options) {
+        return this._request('DELETE', url, data, options)
+    },
+    _request: function (method, url, data, options) {
+        options = options || {};
+        options.method = method;
+        options.path = url;
+        return this.request(options, data);
+    },
     open: function (options) {
-        return  new Entry(options, this);
+        return new Entry(options, this);
     }
 };
