@@ -1,6 +1,6 @@
 var Q = require('q'),
-    $http = require('http'),
-    $https = require('https'),
+    http = require('http'),
+    https = require('https'),
     util = require('util');
 
 module.exports = Http;
@@ -30,9 +30,14 @@ function Http(options) {
         });
     }
 
-    var http = options.protocol === 'https:' ? $https : $http;
-
-    options.agent = new http.Agent({maxSockets: conf.maxConnects});
+    if (options.protocol === 'https:') {
+        options.agent = new https.Agent({maxSockets: conf.maxConnects});
+        options.defaultPort = 443;
+        options.createConnection = options.agent.createConnection;
+        options.protocol = 'http:';
+    } else {
+        options.agent = new http.Agent({maxSockets: conf.maxConnects});
+    }
 
     var connects = 0;
     this._context = {
